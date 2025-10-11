@@ -50,7 +50,7 @@ bcrypt = "0.17"
 
 # Messaging
 redis = { version = "0.24", features = ["tokio-comp", "connection-manager"] }
-lapin = "2.3"  # RabbitMQ client
+lapin = "3.7"  # RabbitMQ client
 
 # Testing
 mockall = "0.13"
