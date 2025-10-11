@@ -46,7 +46,7 @@ git2 = "0.18"
 
 # Authentication
 jsonwebtoken = "10.0"
-bcrypt = "0.15"
+bcrypt = "0.17"
 
 # Messaging
 redis = { version = "0.24", features = ["tokio-comp", "connection-manager"] }
