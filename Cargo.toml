@@ -42,7 +42,7 @@ config = "0.13"
 dotenv = "0.15"
 
 # Git integration
-git2 = "0.18"
+git2 = "0.20"
 
 # Authentication
 jsonwebtoken = "10.0"
