@@ -15,7 +15,7 @@ categories = ["development-tools", "command-line-utilities"]
 tokio = { version = "1.35", features = ["full"] }
 async-trait = "0.1"
 anyhow = "1.0"
-thiserror = "1.0"
+thiserror = "2.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.9"
