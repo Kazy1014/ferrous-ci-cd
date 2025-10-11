@@ -38,7 +38,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 
 # Configuration
-config = "0.13"
+config = "0.15"
 dotenv = "0.15"
 
 # Git integration
