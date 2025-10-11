@@ -1314,6 +1314,7 @@ dependencies = [
  "diesel",
  "diesel_migrations",
  "dotenv",
+ "futures",
  "git2",
  "hyper",
  "insta",

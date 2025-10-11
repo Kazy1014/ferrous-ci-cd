@@ -248,18 +248,42 @@ Ferrous CI/CD follows Domain-Driven Design (DDD) principles:
 ### Running Tests
 
 ```bash
-# Run all tests
+# Run all tests (125+ tests)
 cargo test
 
-# Run with coverage
-cargo tarpaulin --out Html --output-dir coverage
+# Run unit tests only
+cargo test --lib
 
-# Run specific test suite
-cargo test --test integration
+# Run integration tests only
+cargo test --tests
+
+# Run specific test file
+cargo test --test pipeline_tests
+
+# Run all tests including stress tests
+cargo test --tests --ignored
+
+# Generate coverage report
+cargo tarpaulin --out Html --output-dir coverage
 
 # Run benchmarks
 cargo bench
 ```
+
+### Test Suite Structure
+
+Ferrous CI/CD achieves over 90% test coverage.
+
+- **Unit Tests**: 90+ unit tests (domain logic, services, repositories)
+- **Integration Tests**: 24+ integration tests
+  - `integration_test.rs`: E2E workflows (4 tests)
+  - `pipeline_tests.rs`: Pipeline management (5 tests)
+  - `build_tests.rs`: Build execution flows (5 tests)
+  - `agent_tests.rs`: Agent management (6 tests)
+  - `event_tests.rs`: Event system (4 tests)
+  - `stress_tests.rs`: Load tests (4 ignored tests)
+
+See [tests/README.md](tests/README.md) for details.
 
 ### Code Quality
 
@@ -353,5 +377,5 @@ at your option.
 ---
 
 <div align="center">
-  Made with ❤️ and 🦀 by the Ferrous CI/CD Team
+Made with ❤️ and 🦀 by the Ferrous CI/CD Team
 </div>
