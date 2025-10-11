@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ferrous-service
+  namespace: ferrous-ci-cd
+  labels:
+    app: ferrous-server
+spec:
+  type: LoadBalancer
+  selector:
+    app: ferrous-server
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ferrous-metrics
+  namespace: ferrous-ci-cd
+  labels:
+    app: ferrous-server
+spec:
+  type: ClusterIP
+  selector:
+    app: ferrous-server
+  ports:
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+

@@ -13,3 +13,5 @@ backup/
 .npmrc
 .env
 dist/
+# Cargo
+/target/

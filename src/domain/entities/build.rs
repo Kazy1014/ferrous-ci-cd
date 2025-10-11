@@ -155,6 +155,11 @@ impl Build {
         &self.pipeline_id
     }
     
+    /// Get the project ID
+    pub fn project_id(&self) -> &ProjectId {
+        &self.project_id
+    }
+    
     /// Get the build number
     pub fn number(&self) -> u64 {
         self.number

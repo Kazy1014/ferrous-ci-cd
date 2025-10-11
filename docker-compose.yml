@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: ferrous-postgres
+    environment:
+      POSTGRES_DB: ferrous_ci
+      POSTGRES_USER: ferrous
+      POSTGRES_PASSWORD: ferrous_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ferrous"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and message queue
+  redis:
+    image: redis:7-alpine
+    container_name: ferrous-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Ferrous CI/CD Server
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ferrous-server
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    environment:
+      FERROUS__DATABASE__TYPE: postgres
+      FERROUS__DATABASE__URL: postgresql://ferrous:ferrous_password@postgres/ferrous_ci
+      FERROUS__SERVER__HOST: 0.0.0.0
+      FERROUS__SERVER__PORT: 8080
+      FERROUS__SECURITY__JWT_SECRET: change-me-in-production
+      RUST_LOG: info
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./workspace:/app/workspace
+      - ./cache:/app/cache
+      - ./config.yaml:/app/config.yaml:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Prometheus for metrics
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ferrous-prometheus
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    restart: unless-stopped
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ferrous-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  default:
+    name: ferrous-network
+

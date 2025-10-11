@@ -6,8 +6,7 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use ferrous_ci_cd::{init, Config};
 use std::path::PathBuf;
-use tokio::signal;
-use tracing::{error, info};
+use tracing::info;
 
 /// Ferrous CI/CD - A modern CI/CD system built with Rust
 #[derive(Parser, Debug)]
@@ -189,24 +188,25 @@ async fn main() -> Result<()> {
 }
 
 async fn run_server(config: Config) -> Result<()> {
-    info!("Starting Ferrous CI/CD server on {}:{}", 
-          config.server.host, config.server.port);
+    let host = config.server.host.clone();
+    let port = config.server.port;
+    
+    info!("Starting Ferrous CI/CD server on {}:{}", host, port);
     
     // Create application instance
     let app = ferrous_ci_cd::application::Application::new(config).await?;
     
-    // Create server
-    let server = ferrous_ci_cd::presentation::api::create_server(app).await?;
+    // Create router
+    let router = ferrous_ci_cd::presentation::api::create_server(app).await?;
     
-    // Handle shutdown signal
-    let shutdown_signal = async {
-        let _ = signal::ctrl_c().await;
-        info!("Received shutdown signal");
-    };
+    // Create listener
+    let addr = format!("{}:{}", host, port);
+    let listener = tokio::net::TcpListener::bind(&addr).await?;
+    
+    info!("Server listening on {}", addr);
     
     // Start server
-    server
-        .with_graceful_shutdown(shutdown_signal)
+    axum::serve(listener, router)
         .await?;
     
     info!("Server shut down gracefully");

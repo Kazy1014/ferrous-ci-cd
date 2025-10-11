@@ -1,7 +1,6 @@
 //! Error handling for Ferrous CI/CD
 
 use thiserror::Error;
-use std::fmt;
 
 /// Main error type for Ferrous CI/CD
 #[derive(Error, Debug)]
@@ -266,37 +265,40 @@ impl From<anyhow::Error> for Error {
     }
 }
 
-/// Convert from sqlx::Error
-#[cfg(feature = "sqlx")]
-impl From<sqlx::Error> for Error {
-    fn from(err: sqlx::Error) -> Self {
-        match err {
-            sqlx::Error::RowNotFound => Error::NotFound("Database row not found".to_string()),
-            sqlx::Error::Database(db_err) => {
-                // Check for unique constraint violations
-                if let Some(constraint) = db_err.constraint() {
-                    Error::Conflict(format!("Constraint violation: {}", constraint))
-                } else {
-                    Error::Database(db_err.to_string())
-                }
-            }
-            _ => Error::Database(err.to_string()),
-        }
-    }
-}
+// Note: Database-specific error conversions are commented out
+// Uncomment and enable the corresponding features when needed
 
-/// Convert from diesel::result::Error
-#[cfg(feature = "diesel")]
-impl From<diesel::result::Error> for Error {
-    fn from(err: diesel::result::Error) -> Self {
-        match err {
-            diesel::result::Error::NotFound => {
-                Error::NotFound("Database record not found".to_string())
-            }
-            _ => Error::Database(err.to_string())
-        }
-    }
-}
+// /// Convert from sqlx::Error
+// #[cfg(feature = "sqlx")]
+// impl From<sqlx::Error> for Error {
+//     fn from(err: sqlx::Error) -> Self {
+//         match err {
+//             sqlx::Error::RowNotFound => Error::NotFound("Database row not found".to_string()),
+//             sqlx::Error::Database(db_err) => {
+//                 // Check for unique constraint violations
+//                 if let Some(constraint) = db_err.constraint() {
+//                     Error::Conflict(format!("Constraint violation: {}", constraint))
+//                 } else {
+//                     Error::Database(db_err.to_string())
+//                 }
+//             }
+//             _ => Error::Database(err.to_string()),
+//         }
+//     }
+// }
+
+// /// Convert from diesel::result::Error
+// #[cfg(feature = "diesel")]
+// impl From<diesel::result::Error> for Error {
+//     fn from(err: diesel::result::Error) -> Self {
+//         match err {
+//             diesel::result::Error::NotFound => {
+//                 Error::NotFound("Database record not found".to_string())
+//             }
+//             _ => Error::Database(err.to_string())
+//         }
+//     }
+// }
 
 /// Convert from git2::Error
 impl From<git2::Error> for Error {

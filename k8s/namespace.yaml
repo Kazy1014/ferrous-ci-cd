@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ferrous-ci-cd
+  labels:
+    name: ferrous-ci-cd
+    app: ferrous-ci-cd
+

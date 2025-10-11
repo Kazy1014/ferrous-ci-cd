@@ -3,10 +3,10 @@
 //! This library provides the core functionality for the Ferrous CI/CD system,
 //! implementing Domain-Driven Design principles for a clean and maintainable architecture.
 
-#![warn(missing_docs)]
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
 #![allow(clippy::module_name_repetitions)]
+#![allow(missing_docs)] // TODO: Add comprehensive documentation
 
 pub mod domain;
 pub mod application;

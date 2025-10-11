@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ferrous-server
+  namespace: ferrous-ci-cd
+  labels:
+    app: ferrous-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ferrous-server
+  template:
+    metadata:
+      labels:
+        app: ferrous-server
+    spec:
+      containers:
+      - name: ferrous-server
+        image: ferrous/ferrous-ci-cd:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 9090
+          name: metrics
+          protocol: TCP
+        env:
+        - name: FERROUS__DATABASE__TYPE
+          value: "postgres"
+        - name: FERROUS__DATABASE__URL
+          value: "postgresql://ferrous:$(DB_PASSWORD)@postgres-service:5432/ferrous_ci"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ferrous-secrets
+              key: DB_PASSWORD
+        - name: FERROUS__SECURITY__JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: ferrous-secrets
+              key: JWT_SECRET
+        - name: RUST_LOG
+          value: "info"
+        - name: RUST_BACKTRACE
+          value: "1"
+        volumeMounts:
+        - name: config
+          mountPath: /app/config.yaml
+          subPath: config.yaml
+        - name: artifacts
+          mountPath: /data/artifacts
+        - name: workspace
+          mountPath: /data/workspace
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: config
+        configMap:
+          name: ferrous-config
+      - name: artifacts
+        persistentVolumeClaim:
+          claimName: ferrous-artifacts-pvc
+      - name: workspace
+        persistentVolumeClaim:
+          claimName: ferrous-workspace-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ferrous-artifacts-pvc
+  namespace: ferrous-ci-cd
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ferrous-workspace-pvc
+  namespace: ferrous-ci-cd
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+

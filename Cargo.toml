@@ -10,9 +10,6 @@ readme = "README.md"
 keywords = ["ci", "cd", "continuous-integration", "continuous-delivery", "devops"]
 categories = ["development-tools", "command-line-utilities"]
 
-[workspace]
-members = [".", "crates/*"]
-
 [dependencies]
 # Core dependencies
 tokio = { version = "1.35", features = ["full"] }
@@ -67,6 +64,9 @@ colored = "2.1"
 prometheus = { version = "0.13", features = ["process"] }
 opentelemetry = "0.21"
 opentelemetry-jaeger = "0.20"
+
+# System
+num_cpus = "1.16"
 
 [dev-dependencies]
 criterion = "0.5"

@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ferrous-config
+  namespace: ferrous-ci-cd
+data:
+  config.yaml: |
+    server:
+      host: "0.0.0.0"
+      port: 8080
+      workers: 4
+    
+    database:
+      type: "postgres"
+      url: "postgresql://ferrous:password@postgres-service:5432/ferrous_ci"
+      max_connections: 20
+    
+    storage:
+      artifacts_path: "/data/artifacts"
+      workspace_path: "/data/workspace"
+      cache_path: "/data/cache"
+    
+    security:
+      jwt_secret: "change-me-in-production"
+      session_timeout: 3600
+    
+    agents:
+      max_concurrent_builds: 10
+      heartbeat_interval: 30
+    
+    monitoring:
+      prometheus_enabled: true
+      metrics_port: 9090
+
