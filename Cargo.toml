@@ -45,7 +45,7 @@ dotenv = "0.15"
 git2 = "0.18"
 
 # Authentication
-jsonwebtoken = "9.2"
+jsonwebtoken = "10.0"
 bcrypt = "0.15"
 
 # Messaging
