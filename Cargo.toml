@@ -45,7 +45,7 @@ dotenv = "0.15"
 git2 = "0.20"
 
 # Authentication
-jsonwebtoken = { version = "9.3", default-features = true }
+jsonwebtoken = { version = "10.1", default-features = true }
 bcrypt = "0.15"
 
 # Messaging
