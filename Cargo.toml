@@ -63,7 +63,7 @@ colored = "2.1"
 # Monitoring
 prometheus = { version = "0.13", features = ["process"] }
 opentelemetry = "0.31"
-opentelemetry-jaeger = "0.20"
+opentelemetry-jaeger = "0.22"
 
 # System
 num_cpus = "1.16"
