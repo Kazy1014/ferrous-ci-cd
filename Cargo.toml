@@ -70,7 +70,7 @@ num_cpus = "1.16"
 
 [dev-dependencies]
 criterion = "0.7"
-proptest = "1.4"
+proptest = "1.9"
 quickcheck = "1.0"
 quickcheck_macros = "1.0"
 rstest = "0.26"
